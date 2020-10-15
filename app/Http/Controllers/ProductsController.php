@@ -25,7 +25,6 @@ class ProductsController extends Controller
      */
     public function store(Request $request, ProductRepository $productRepository): ProductResource
     {
-
         (new RequestValidator($request, new CreateProductRequest()))->validate();
 
         $service = new ProductService($productRepository);
