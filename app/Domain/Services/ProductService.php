@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Domain\Services;
 
+use App\Events\Product\ProductCreatedEvent;
 use App\Exceptions\InvalidDataBagException;
 use App\Exceptions\InvalidDataItemException;
 use App\Domain\Entities\Product;
@@ -43,7 +44,10 @@ class ProductService
     public function createProduct(string $name, float $priceValue): Product
     {
         $product = $this->createProductEntity($name, $priceValue);
-        return $this->productRepository->save($product);
+        $product = $this->productRepository->save($product);
+        event(new ProductCreatedEvent($product));
+
+        return $product;
     }
 
     /**
