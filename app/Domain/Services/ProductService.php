@@ -13,6 +13,7 @@ use App\Domain\Repositories\ProductRepository;
 use App\Domain\VOs\Currency;
 use App\Domain\VOs\Product\ProductName;
 use App\Domain\VOs\Product\ProductPrice;
+use App\Exceptions\Validation\ValueAlreadyExistsException;
 
 /**
  * Class ProductService
@@ -80,7 +81,11 @@ class ProductService
     private function createProductName(string $name, InvalidDataBagException $exception): ?ProductName
     {
         try {
-            return new ProductName($name);
+            $productName = new ProductName($name);
+            if ($this->productRepository->findByProductName($productName)) {
+                throw ValueAlreadyExistsException::createWithMessage('Product with that name already exists.');
+            }
+            return $productName;
         } catch (InvalidDataItemException $e) {
             $exception->addError($e->setErrorSource('name'));
             return null;
