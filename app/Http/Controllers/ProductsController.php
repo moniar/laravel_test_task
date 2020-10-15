@@ -6,7 +6,9 @@ namespace App\Http\Controllers;
 
 use App\Domain\Repositories\ProductRepository;
 use App\Domain\Services\ProductService;
+use App\Http\Requests\Product\CreateProductRequest;
 use App\Http\Resources\ProductResource;
+use App\Http\Tools\RequestDescription\RequestValidator;
 use Illuminate\Http\Request;
 
 /**
@@ -23,8 +25,13 @@ class ProductsController extends Controller
      */
     public function store(Request $request, ProductRepository $productRepository): ProductResource
     {
+
+        (new RequestValidator($request, new CreateProductRequest()))->validate();
+
         $service = new ProductService($productRepository);
-        $product = $service->createProduct($request->get('name'), $request->get('price'));
+        $product = $service->createProduct($request->get('name'), (float)$request->get('price'));
+
+
         return new ProductResource($product);
     }
 }

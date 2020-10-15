@@ -54,6 +54,16 @@ class Handler extends ExceptionHandler
                     ['errors' => $e->toArray()],
                     Response::HTTP_UNPROCESSABLE_ENTITY
                 );
+            case $e instanceof InvalidRequestBodyException:
+                return \response(
+                    ['errors' => $e->toArray()],
+                    Response::HTTP_BAD_REQUEST
+                );
+            case $e instanceof InvalidRequestContentTypeException:
+                return \response(
+                    ['errors' => $e->toArray()],
+                    Response::HTTP_UNSUPPORTED_MEDIA_TYPE
+                );
             default:
                 return parent::render($request, $e);
         }

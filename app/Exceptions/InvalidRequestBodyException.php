@@ -9,22 +9,24 @@ use App\Exceptions\Blocks\ErrorSource;
 use Illuminate\Contracts\Support\Arrayable;
 
 /**
- * Class InvalidDataItemException
- * @package App\Exceptions\Validation
+ * Class InvalidRequestBodyException
+ * @package App\Exceptions
  */
-abstract class InvalidDataItemException extends \Exception implements Arrayable
+class InvalidRequestBodyException extends \Exception implements Arrayable
 {
     use ErrorCode;
     use ErrorSource;
 
     /**
-     * Creates new invalid entity error exception with specified message.
+     * InvalidRequestBodyException constructor.
      * @param string $message
-     * @return InvalidDataItemException
+     * @param int $code
+     * @param \Throwable|null $previous
      */
-    public static function createWithMessage(string $message): InvalidDataItemException
+    public function __construct($message = "", $code = 0, \Throwable $previous = null)
     {
-        return new static($message);
+        parent::__construct($message, $code, $previous);
+        $this->setErrorCode('invalid_request_body');
     }
 
     /**
@@ -37,7 +39,7 @@ abstract class InvalidDataItemException extends \Exception implements Arrayable
         return [
             'code' => $this->getErrorCode(),
             'message' => $this->getMessage(),
-            'source' => $this->getErrorSource(),
+            'source' => $this->getErrorSource()
         ];
     }
 }
