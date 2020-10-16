@@ -18,16 +18,6 @@ abstract class InvalidDataItemException extends \Exception implements Arrayable
     use ErrorSource;
 
     /**
-     * Creates new invalid entity error exception with specified message.
-     * @param string $message
-     * @return InvalidDataItemException
-     */
-    public static function createWithMessage(string $message): InvalidDataItemException
-    {
-        return new static($message);
-    }
-
-    /**
      * Get the instance as an array.
      *
      * @return array

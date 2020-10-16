@@ -57,11 +57,12 @@ class RequestValidator
     private function validateContentType(): void
     {
         $requestContentType = Str::of($this->request->headers->get('content-type'));
+        $expectedContentType = $this->requestDescription->getContentType();
 
-        if (!$requestContentType->exactly($this->requestDescription->getContentType())) {
-            throw new InvalidRequestContentTypeException(
+        if (!$requestContentType->exactly($expectedContentType)) {
+            throw (new InvalidRequestContentTypeException(
                 sprintf('Content-type %s is required.', $this->requestDescription->getContentType())
-            );
+            ))->setExpectedContentType($expectedContentType);
         }
     }
 

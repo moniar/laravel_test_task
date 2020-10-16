@@ -83,7 +83,7 @@ class ProductService
         try {
             $productName = new ProductName($name);
             if ($this->productRepository->findByProductName($productName)) {
-                throw ValueAlreadyExistsException::createWithMessage('Product with that name already exists.');
+                throw new ValueAlreadyExistsException('Product with that name already exists.');
             }
             return $productName;
         } catch (InvalidDataItemException $e) {

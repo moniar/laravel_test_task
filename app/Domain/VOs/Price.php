@@ -64,7 +64,7 @@ class Price
     protected function validate(): void
     {
         if ($this->value < 0) {
-            throw ValueInvalidException::createWithMessage('Price cannot be < 0.');
+            throw new ValueInvalidException('Price cannot be < 0.');
         }
     }
 }

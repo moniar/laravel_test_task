@@ -5,15 +5,22 @@ declare(strict_types=1);
 namespace App\Exceptions;
 
 use App\Exceptions\Blocks\ErrorCode;
+use Illuminate\Contracts\Support\Arrayable;
 use Throwable;
 
 /**
  * Class InvalidRequestContentTypeException
  * @package App\Exceptions
  */
-class InvalidRequestContentTypeException extends \Exception
+class InvalidRequestContentTypeException extends \Exception implements Arrayable
 {
     use ErrorCode;
+
+    /**
+     * Expected content type.
+     * @var string
+     */
+    private string $expectedContentType;
 
     /**
      * InvalidRequestContentTypeException constructor.
@@ -25,6 +32,27 @@ class InvalidRequestContentTypeException extends \Exception
     {
         parent::__construct($message, $code, $previous);
         $this->setErrorCode('invalid_request_content_type');
+    }
+
+    /**
+     * Sets expected content type.
+     * @param string $expectedContentType
+     * @return $this
+     */
+    public function setExpectedContentType(string $expectedContentType): InvalidRequestContentTypeException
+    {
+        $this->expectedContentType = $expectedContentType;
+
+        return $this;
+    }
+
+    /**
+     * Gets expected content type.
+     * @return string
+     */
+    public function getExpectedContentType(): string
+    {
+        return $this->expectedContentType;
     }
 
     /**

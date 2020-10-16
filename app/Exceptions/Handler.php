@@ -2,6 +2,7 @@
 
 namespace App\Exceptions;
 
+use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Foundation\Exceptions\Handler as ExceptionHandler;
 use Illuminate\Http\Response;
 use Throwable;
@@ -48,24 +49,38 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $e)
     {
+        $headers = collect()->put('Content-Type', 'application/json');
+        $status = Response::HTTP_INTERNAL_SERVER_ERROR;
+        $content = [
+            'errors' => $e instanceof Arrayable ? $e->toArray() : [
+                'code' => 'internal_server_error',
+                'message' => 'Internal server error'
+            ]
+        ];
+
         switch (true) {
             case $e instanceof InvalidDataBagException:
-                return \response(
-                    ['errors' => $e->toArray()],
-                    Response::HTTP_UNPROCESSABLE_ENTITY
-                );
+                $status = Response::HTTP_UNPROCESSABLE_ENTITY;
+                break;
             case $e instanceof InvalidRequestBodyException:
-                return \response(
-                    ['errors' => $e->toArray()],
-                    Response::HTTP_BAD_REQUEST
-                );
+                $status = Response::HTTP_BAD_REQUEST;
+                break;
             case $e instanceof InvalidRequestContentTypeException:
-                return \response(
-                    ['errors' => $e->toArray()],
-                    Response::HTTP_UNSUPPORTED_MEDIA_TYPE
-                );
+                $headers->put('Accept', $e->getExpectedContentType());
+                $status = Response::HTTP_UNSUPPORTED_MEDIA_TYPE;
+                break;
             default:
-                return parent::render($request, $e);
+                if (config('app.debug')) {
+                    $content = (string)$e;
+                    $headers->put('Content-Type', 'text/html');
+                }
+                break;
         }
+
+        return \response(
+            $content,
+            $status,
+            $headers->all()
+        );
     }
 }

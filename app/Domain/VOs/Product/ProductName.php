@@ -36,11 +36,11 @@ class ProductName extends Name
     private function validate(): void
     {
         if ($this->isEmpty()) {
-            throw ValueRequiredException::createWithMessage('Product name cannot be empty.');
+            throw new ValueRequiredException('Product name cannot be empty.');
         }
 
         if ($this->length() > self::MAX_LENGTH) {
-            throw ValueInvalidException::createWithMessage(
+            throw new ValueInvalidException(
                 sprintf('Product name cannot be longer than %s chars.', self::MAX_LENGTH)
             );
         }

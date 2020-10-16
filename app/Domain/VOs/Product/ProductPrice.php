@@ -35,7 +35,7 @@ class ProductPrice extends Price
 
         $allowedCurrenciesCollection = collect($this->allowedCurrencies);
         if (!$allowedCurrenciesCollection->contains((string)$this->getCurrency())) {
-            throw ValueInvalidException::createWithMessage(
+            throw new ValueInvalidException(
                 sprintf(
                     'Product price can be defined only in following currencies: %s.',
                     $allowedCurrenciesCollection->implode(', ')
