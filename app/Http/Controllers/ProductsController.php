@@ -10,6 +10,7 @@ use App\Http\Requests\Product\CreateProductRequest;
 use App\Http\Resources\ProductResource;
 use App\Http\Tools\RequestDescription\RequestValidator;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class ProductsController
@@ -21,16 +22,17 @@ class ProductsController extends Controller
      * Handling request for creating a new product.
      * @param Request $request
      * @param ProductRepository $productRepository
-     * @return ProductResource
+     * @return Response
      */
-    public function store(Request $request, ProductRepository $productRepository): ProductResource
+    public function store(Request $request, ProductRepository $productRepository): Response
     {
         (new RequestValidator($request, new CreateProductRequest()))->validate();
 
         $service = new ProductService($productRepository);
         $product = $service->createProduct($request->get('name'), (float)$request->get('price'));
 
-
-        return new ProductResource($product);
+        return (new ProductResource($product))
+            ->response()
+            ->setStatusCode(Response::HTTP_CREATED);
     }
 }
